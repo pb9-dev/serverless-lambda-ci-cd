@@ -25,7 +25,7 @@ module.exports.handler = async (event) => {
     };
   }
 
-  if (token !== validToken) { //if token is invalid
+  if (token !== validToken) { //if token is invalid deny the user to invoke API Gateway
     return {
       principalId: "user",
       policyDocument: { Version: "2012-10-17", Statement: [{ Action: "execute-api:Invoke", Effect: "Deny", Resource: event.methodArn }] },
