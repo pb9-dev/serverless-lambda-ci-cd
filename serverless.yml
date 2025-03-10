@@ -30,6 +30,8 @@ package:
 functions:
   authorizer:
     handler: authorizer.handler
+    environment:
+      VALID_TOKEN: "secret-token"
     fileSystemConfig:
       arn: arn:aws:elasticfilesystem:ap-south-1:423623832132:access-point/fsap-0db68ab4a3048fa5d
       localMountPath: /mnt/efs

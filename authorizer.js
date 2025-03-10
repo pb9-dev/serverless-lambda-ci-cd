@@ -3,7 +3,7 @@ module.exports.handler = async (event) => {
   const logDir = "/mnt/efs/lambda";
   const logFilePath = `${logDir}/auth_requests.log`;
   const token = event.authorizationToken || ""; //getting token from request event
-  const validToken = "secret-token";
+  const validToken = process.env.VALID_TOKEN;
 
   console.log("Received event:", JSON.stringify(event, null, 2));
 
