@@ -1,0 +1,9 @@
+exports.handler = async () => {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        fileUrl: "https://file-conversion-bucket-pipeline.s3.ap-south-1.amazonaws.com/test.pdf?response-content-disposition=inline&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEEMaCmFwLXNvdXRoLTEiSDBGAiEAuDDZiveo%2B4VJZ2eE1PtlRa03tR2CyMMlvavd7xrZtr8CIQC9R7CgrcwhCO4k23vCglsNkX2nJDWwKlGgjZlnhYFSuCqGAwiM%2F%2F%2F%2F%2F%2F%2F%2F%2F%2F8BEAAaDDQyMzYyMzgzMjEzMiIMckM%2BHWpBsXE%2Fy9B7KtoCCtvw6xL9pJBZ1hxD8WtlWxbuYawZAnl0ghKfhDo0VM7%2FumPRqQlYam4kKCqTy8ycqiz6ElYnWBU%2FtFSPYlQApCwRo1Pme%2F6ITuGCgmehFFan6yCyAqHSDyfGVKY%2BXweMmY7hOtJphQZC3Ffbcd71ZaBdXRqpTEwmuW4ufJvUQVTebSd60Hb2e2B%2FRP58J5g5xYdGmdPswtQxxxiVxLfzQBxfvTaqxxXNDNtXDemgvm7kGTMNTlBr%2BDDhddQ9scHzS32K884xZFwK3T5tpXoPWyTOKN3IU1V7BPXUcZgS3hCiGCraN5x7f9NmUr76WkkqRO%2BWS6RDgimmEr68m7yV4JZoe0n%2B4HhKq2rdrO9Yb9K8VbiQnJrUfAkslOJVq3h8exxG4ci99YqNDUVFh4YiyMy5WcDUmLGkjObpiS7bBvde6cI0Op%2BlADXlHwKQUMMATw7uTVNtPUInXzCrt7q%2BBjqOAsXR4ZBFBVVnk6CdR2bb%2BdO%2FdDFFzsnqCLShsZlo17ImEP6A2Sj%2FLITKQGuDEguoYa2zqndKP08A1pgE9Xe5br3EVlfjVq%2Ba5lOcwpzvvillhreaFNQAUVCc70GTjb0RH7iiH8phQzJJZDQSPSPGa5YiYdVWHzHoHeEpevQxYaxsH3opNQkWaZd3Sgg9%2FaUXBHKHbbdvBFWhfj6ehlg8ILECLDI8qenXaKBz6IAthi%2FT9RQivN1yBa5MwteAkwqLBch%2F3Bpm4rv3%2FHEKKWosoAz3NY0cVooez%2BCpXlvGJh%2F8Xd64avZjWWI701kpPWLfF8ufK1fXlSs6oKMpFFu9yX6qUZggrNhichlq5uKC2g%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAWFIPSWJCPS4HZ76R%2F20250310%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20250310T110611Z&X-Amz-Expires=28800&X-Amz-SignedHeaders=host&X-Amz-Signature=a7cc9d8982a9a7dc478c8098599a237a4ac69de437ccc9dea83c23ae957368a0" // S3 file URL
+      }),
+    };
+  };
+  

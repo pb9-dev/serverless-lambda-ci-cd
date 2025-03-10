@@ -89,7 +89,32 @@ functions:
     package:
       include:
         - efsOperations.js
-        
+  getFileUrlLambda:
+    handler: getFileUrlLambda.handler
+    package:
+      include:
+        - getFileUrlLambda.js
+  downloadFileLambda:
+    handler: downloadFileLambda.handler
+    events:
+      - http:
+          path: download-file
+          method: get
+          cors: true
+          authorizer: 
+            name: authorizer
+            resultTtlInSeconds: 0
+    environment:
+      GET_FILE_URL_LAMBDA: "getFileUrlLambda"
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - lambda:InvokeFunction
+        Resource: "arn:aws:lambda:ap-south-1:423623832132:function:getFileUrlLambda"
+    package:
+      include:
+        - node_modules/axios/**
+        - downloadFileLambda.js
 resources:
   Resources:
     GatewayResponseAccessDenied:
