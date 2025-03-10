@@ -1,38 +1,55 @@
-const AWS = require("aws-sdk");
+const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda"); // AWS SDK v3
 const axios = require("axios");
 
-const lambda = new AWS.Lambda();
-
+const lambda = new LambdaClient(); // Initialize AWS Lambda client
+const urlLambda=process.env.NAME_OF_URL_LAMBDA;
 exports.handler = async (event) => {
-  try {
-    // Invoke getFileUrlLambda to get the file URL
-    const response = await lambda.invoke({
-      FunctionName: process.env.GET_FILE_URL_LAMBDA, 
-      InvocationType: "RequestResponse",
-    }).promise();
+  console.log("Event received:", JSON.stringify(event));
 
-    // Parse the response to get the file URL
-    const payload = JSON.parse(response.Payload);
+  try {
+    if (!urlLambda) {
+      throw new Error("GET_FILE_URL_LAMBDA environment variable is not set");
+    }
+
+    console.log(`Invoking Lambda: ${urlLambda}`);
+
+    // Invoke getFileUrlLambda using AWS SDK v3
+    const command = new InvokeCommand({
+      FunctionName: urlLambda,
+      InvocationType: "RequestResponse",
+    });
+
+    const response = await lambda.send(command);
+
+    // Parse response
+    const payload = JSON.parse(new TextDecoder().decode(response.Payload));
     const fileUrl = JSON.parse(payload.body).fileUrl;
 
     if (!fileUrl) {
-      return { statusCode: 500, body: "No file URL returned from getFileUrlLambda" };
+      throw new Error("No file URL returned from getFileUrlLambda function");
     }
 
+    console.log(`Fetching file from URL: ${fileUrl}`);
+
     // Fetch the actual file from the URL
-    const fileResponse = await axios.get(fileUrl, { responseType: "arraybuffer" });
+    const fileResponse = await axios.get(fileUrl, { responseType: "arraybuffer", timeout: 10000 });
+
+    console.log("File fetched successfully. Returning response to API Gateway.");
 
     return {
       statusCode: 200,
       headers: {
-        "Content-Type": "application/pdf", 
+        "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=test.pdf",
       },
-      body: fileResponse.data.toString("base64"), // Return file as base64
-      isBase64Encoded: true, // Needed for binary file responses
+      body: fileResponse.data.toString("base64"),
+      isBase64Encoded: true,
     };
   } catch (error) {
-    console.error("Error:", error);
-    return { statusCode: 500, body: "Error fetching file" };
+    console.error("Error:", error.message);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Error fetching file", error: error.message }),
+    };
   }
 };
