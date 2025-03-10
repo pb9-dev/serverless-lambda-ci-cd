@@ -21,7 +21,10 @@ provider:
       Action:
         - elasticfilesystem:DescribeMountTargets
       Resource: "*"
-
+    - Effect: "Allow" 
+      Action:
+        - lambda:InvokeFunction
+      Resource: "arn:aws:lambda:ap-south-1:423623832132:function:getFileUrlLambda"
 package:
   individually: true 
   exclude:
@@ -106,11 +109,6 @@ functions:
             resultTtlInSeconds: 0
     environment:
       GET_FILE_URL_LAMBDA: "getFileUrlLambda"
-    iamRoleStatements:
-      - Effect: "Allow"
-        Action:
-          - lambda:InvokeFunction
-        Resource: "arn:aws:lambda:ap-south-1:423623832132:function:getFileUrlLambda"
     package:
       include:
         - node_modules/axios/**
