@@ -1,0 +1,101 @@
+service: redirect-api
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: ap-south-1
+  vpc:
+    securityGroupIds:
+      - sg-001f4af49f4b75d56  
+    subnetIds:
+      - subnet-06c71c0f167960b22
+      - subnet-05c22a1d6765a493a
+      - subnet-0a5abb2b1377560a0
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - elasticfilesystem:ClientMount
+        - elasticfilesystem:ClientWrite
+      Resource: arn:aws:elasticfilesystem:ap-south-1:423623832132:file-system/fs-0002403ef254e506d
+    - Effect: "Allow"
+      Action:
+        - elasticfilesystem:DescribeMountTargets
+      Resource: "*"
+
+package:
+  individually: true 
+  exclude:
+    - "**" 
+
+functions:
+  authorizer:
+    handler: authorizer.handler
+    fileSystemConfig:
+      arn: arn:aws:elasticfilesystem:ap-south-1:423623832132:access-point/fsap-0db68ab4a3048fa5d
+      localMountPath: /mnt/efs
+    package:
+      include:
+        - authorizer.js
+
+  redirect:
+    handler: redirect.handler
+    events:
+      - http:
+          path: redirect
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer
+            resultTtlInSeconds: 0
+    fileSystemConfig:
+      arn: arn:aws:elasticfilesystem:ap-south-1:423623832132:access-point/fsap-0db68ab4a3048fa5d
+      localMountPath: /mnt/efs
+    package:
+      include:
+        - redirect.js
+
+  listEFSFiles:
+    handler: efsOperations.listEFSFiles
+    fileSystemConfig:
+      arn: arn:aws:elasticfilesystem:ap-south-1:423623832132:access-point/fsap-0db68ab4a3048fa5d
+      localMountPath: /mnt/efs
+    events:
+      - http:
+          path: list-efs-files
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer 
+            resultTtlInSeconds: 0
+    package:
+      include:
+        - efsOperations.js
+
+  downloadEFSFile:
+    handler: efsOperations.downloadEFSFile
+    fileSystemConfig:
+      arn: arn:aws:elasticfilesystem:ap-south-1:423623832132:access-point/fsap-0db68ab4a3048fa5d
+      localMountPath: /mnt/efs
+    events:
+      - http:
+          path: download-efs-file
+          method: get
+          cors: true
+          authorizer:
+            name: authorizer  
+            resultTtlInSeconds: 0
+    package:
+      include:
+        - efsOperations.js
+        
+resources:
+  Resources:
+    GatewayResponseAccessDenied:
+      Type: AWS::ApiGateway::GatewayResponse
+      Properties:
+        ResponseType: ACCESS_DENIED
+        RestApiId:
+          Ref: ApiGatewayRestApi
+        StatusCode: 403
+        ResponseTemplates:
+          application/json: '{"message": "$context.authorizer.message"}'
