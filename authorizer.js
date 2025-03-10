@@ -2,7 +2,7 @@ const fs = require("fs");
 module.exports.handler = async (event) => {
   const logDir = "/mnt/efs/lambda";
   const logFilePath = `${logDir}/auth_requests.log`;
-  const token = event.authorizationToken || "";
+  const token = event.authorizationToken || ""; //getting token from request event
   const validToken = "secret-token";
 
   console.log("Received event:", JSON.stringify(event, null, 2));
@@ -17,7 +17,7 @@ module.exports.handler = async (event) => {
     console.error("Failed to write auth request:", err);
   }
 
-  if (!token) {
+  if (!token) {  // if no token is found
     return {
       principalId: "user",
       policyDocument: { Version: "2012-10-17", Statement: [{ Action: "execute-api:Invoke", Effect: "Deny", Resource: event.methodArn }] },
@@ -25,7 +25,7 @@ module.exports.handler = async (event) => {
     };
   }
 
-  if (token !== validToken) {
+  if (token !== validToken) { //if token is invalid
     return {
       principalId: "user",
       policyDocument: { Version: "2012-10-17", Statement: [{ Action: "execute-api:Invoke", Effect: "Deny", Resource: event.methodArn }] },
@@ -33,7 +33,7 @@ module.exports.handler = async (event) => {
     };
   }
 
-  return {
+  return { // if token in valid allow the user to invoke the API Gateway method
     principalId: "user",
     policyDocument: { Version: "2012-10-17", Statement: [{ Action: "execute-api:Invoke", Effect: "Allow", Resource: event.methodArn }] },
     context: { message: "Authorization successful" },

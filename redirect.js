@@ -15,7 +15,7 @@ module.exports.handler = async (event) => {
 
   return {
     statusCode: 302,
-    headers: { Location: "https://www.skype.com/" },
+    headers: { Location: "https://www.skype.com/" }, //redirecting to skype
     body: "Redirecting to Skype...",
   };
 };
