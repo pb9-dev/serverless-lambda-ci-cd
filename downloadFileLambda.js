@@ -1,7 +1,7 @@
 const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda"); 
 const axios = require("axios");
 
-const lambda = new LambdaClient(); // Initialize AWS Lambda client
+const lambda = new LambdaClient(); // Initializing AWS Lambda client
 const urlLambda=process.env.NAME_OF_URL_LAMBDA;
 exports.handler = async (event) => {
   console.log("Event received:", JSON.stringify(event));
