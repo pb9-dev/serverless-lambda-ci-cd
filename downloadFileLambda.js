@@ -2,20 +2,20 @@ const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda");
 const axios = require("axios");
 
 const lambda = new LambdaClient(); // Initializing AWS Lambda client
-const urlLambda=process.env.NAME_OF_URL_LAMBDA;
+const fileUrlLambdaName=process.env.NAME_OF_URL_LAMBDA;
 exports.handler = async (event) => {
   console.log("Event received:", JSON.stringify(event));
 
   try {
-    if (!urlLambda) {
+    if (!fileUrlLambdaName) {
       throw new Error("GET_FILE_URL_LAMBDA environment variable is not set");
     }
 
-    console.log(`Invoking Lambda: ${urlLambda}`);
+    console.log(`Invoking Lambda: ${fileUrlLambdaName}`);
 
     // Invoking Lambda
     const command = new InvokeCommand({
-      FunctionName: urlLambda,
+      FunctionName: fileUrlLambdaName,
       InvocationType: "RequestResponse",
     });
 
@@ -23,6 +23,7 @@ exports.handler = async (event) => {
 
     // Parse response
     const payload = JSON.parse(new TextDecoder().decode(response.Payload));
+    console.log(`Payload = ${payload}`);
     const fileUrl = JSON.parse(payload.body).fileUrl;
 
     if (!fileUrl) {
