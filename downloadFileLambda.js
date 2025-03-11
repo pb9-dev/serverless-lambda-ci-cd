@@ -26,7 +26,7 @@ exports.handler = async (event) => {
     const fileUrl = JSON.parse(payload.body).fileUrl;
 
     if (!fileUrl) {
-      throw new Error("No file URL returned from getFileUrlLambda function");
+      throw new Error("No file URL returned from invoked function");
     }
 
     console.log(`Fetching file from URL: ${fileUrl}`);
