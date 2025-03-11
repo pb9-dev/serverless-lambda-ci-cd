@@ -23,7 +23,7 @@ exports.handler = async (event) => {
 
     // Parse response
     const payload = JSON.parse(new TextDecoder().decode(response.Payload));
-    console.log(`Payload = ${payload}`);
+    console.log("Payload =", JSON.stringify(payload, null, 2));
     const fileUrl = JSON.parse(payload.body).fileUrl;
 
     if (!fileUrl) {
