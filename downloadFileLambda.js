@@ -5,7 +5,12 @@ const lambda = new LambdaClient(); // Initializing AWS Lambda client
 const fileUrlLambdaName=process.env.NAME_OF_URL_LAMBDA;
 exports.handler = async (event) => {
   console.log("Event received:", JSON.stringify(event));
-
+  const CORS_HEADERS = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "GET",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Expose-Headers": "Content-Disposition" 
+  };
   try {
     if (!fileUrlLambdaName) {
       throw new Error("GET_FILE_URL_LAMBDA environment variable is not set");
@@ -36,20 +41,23 @@ exports.handler = async (event) => {
     const fileResponse = await axios.get(fileUrl, { responseType: "arraybuffer" });
 
     console.log("File fetched successfully, returning response to API Gateway.");
+    console.log(fileResponse)
+    console.log(fileResponse.data.toString('base64'))
 
     return {
       statusCode: 200,
       headers: {
+        ...CORS_HEADERS,
         "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=test.pdf",
       },
-      body: fileResponse.data.toString("base64"),
-      isBase64Encoded: true,
+      body: fileResponse.data.toString(),
     };
   } catch (error) {
     console.error("Error:", error.message);
     return {
       statusCode: 500,
+      headers: CORS_HEADERS,
       body: JSON.stringify({ message: "Error fetching file", error: error.message }),
     };
   }

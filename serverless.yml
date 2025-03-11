@@ -4,6 +4,17 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: ap-south-1
+  apiGateway:
+    binaryMediaTypes:
+      - "application/pdf"
+  httpApi:
+    cors:
+      allowedOrigins:
+        - "http://127.0.0.1:5500"
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - Content-Disposition
   vpc:
     securityGroupIds:
       - sg-001f4af49f4b75d56  
@@ -114,7 +125,6 @@ functions:
               - Authorization
               - X-Requested-With
               - Accept
-            allowCredentials: true
           authorizer: 
             name: authorizer
             resultTtlInSeconds: 0
