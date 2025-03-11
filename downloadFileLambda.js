@@ -1,4 +1,4 @@
-const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda"); // AWS SDK v3
+const { LambdaClient, InvokeCommand } = require("@aws-sdk/client-lambda"); 
 const axios = require("axios");
 
 const lambda = new LambdaClient(); // Initialize AWS Lambda client
@@ -13,7 +13,7 @@ exports.handler = async (event) => {
 
     console.log(`Invoking Lambda: ${urlLambda}`);
 
-    // Invoke getFileUrlLambda using AWS SDK v3
+    // Invoking Lambda
     const command = new InvokeCommand({
       FunctionName: urlLambda,
       InvocationType: "RequestResponse",
@@ -32,7 +32,7 @@ exports.handler = async (event) => {
     console.log(`Fetching file from URL: ${fileUrl}`);
 
     // Fetch the actual file from the URL
-    const fileResponse = await axios.get(fileUrl, { responseType: "arraybuffer", timeout: 10000 });
+    const fileResponse = await axios.get(fileUrl, { responseType: "arraybuffer" });
 
     console.log("File fetched successfully. Returning response to API Gateway.");
 
