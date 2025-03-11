@@ -34,7 +34,7 @@ exports.handler = async (event) => {
     // Fetch the actual file from the URL
     const fileResponse = await axios.get(fileUrl, { responseType: "arraybuffer" });
 
-    console.log("File fetched successfully. Returning response to API Gateway.");
+    console.log("File fetched successfully, returning response to API Gateway.");
 
     return {
       statusCode: 200,
