@@ -15,7 +15,6 @@ exports.handler = async (event) => {
     if (!fileUrlLambdaName) {
       throw new Error("GET_FILE_URL_LAMBDA environment variable is not set");
     }
-
     console.log(`Invoking Lambda: ${fileUrlLambdaName}`);
 
     // Invoking Lambda
@@ -50,8 +49,10 @@ exports.handler = async (event) => {
         ...CORS_HEADERS,
         "Content-Type": "application/pdf",
         "Content-Disposition": "attachment; filename=test.pdf",
+        "Content-Encoding": "binary",
       },
-      body: fileResponse.data.toString(),
+      body: Buffer.from(fileResponse.data).toString("base64"),
+      isBase64Encoded: true
     };
   } catch (error) {
     console.error("Error:", error.message);
