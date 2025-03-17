@@ -1,9 +1,27 @@
-exports.handler = async () => {
+const { S3Client, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+
+const s3 = new S3Client({ region: "ap-south-1" });
+
+exports.handler = async (event) => {
+  try {
+    const bucketName = "sample-bucket-redirectapi";
+    let fileKey = "large-area-display-price-tracker--may-2024-analysis-pdf.pdf";
+
+    fileKey = encodeURIComponent(fileKey);
+
+    const command = new GetObjectCommand({ Bucket: bucketName, Key: fileKey });
+
+    const presignedUrl = await getSignedUrl(s3, command, { expiresIn: 120 });
+
+    console.log("Generated Presigned URL:", presignedUrl);
+
     return {
       statusCode: 200,
-      body: JSON.stringify({
-        fileUrl: "https://searchproject-frontend.s3.ap-south-1.amazonaws.com/file-sample_150kB.pdf?response-content-disposition=inline&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEIX%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCmFwLXNvdXRoLTEiRjBEAiBelyuch%2Bugs4TyiPBDOWUtH8FyPYwXQfGpGy75vDJfLAIgNpjoPVwiLC5yoWu1ulqyVQbpFPcE4v4Sy32%2FnE8KiWEqhgMIzv%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FARAAGgw0MjM2MjM4MzIxMzIiDEHcjrsiUuciOHbNYyraApiJKKq%2B0QykM%2Bwg5OLtcT1iNtyqZJCRZ1nMFMCZcBF5EH%2Fv7OoN0eWA4JOyXs52tHSVX%2FwTLrblqOS32LngQe44eCRflCdo6p3CQi2DmsPfxtjqII%2FgLsrUYGpnUijXVJR1ARS8uj4Jh886fzDRdxC0AgpCJ%2BGKEJbUbhILukMZY%2F0O7OQ1s2A3OD3wwH76nglB9i7IuQRidScEo9tSUm%2BDaDlwY0F892gnjY%2Bb2yz099p8vs5QyehUogMbNjZyrV4vK2pfWre2ceTXDGEzqrmSNOeXHhe%2BWSPr3fYzlnY%2FyRLBdLf2pmnbFWwH8cKj68XwuPgA%2BK5EXIii1IgEZdBx2gsET9%2FEixBIkUiG8xHwNoP2HLNOytOLln64aGXyAPfUN15QNY60F062Ybafi0t%2FHDd4DbOuzbvAyh3dbZOAO4R%2BKCqq6MeVwsQJtxOhD5%2B0qaahPqYVvTcwj7fJvgY6kAK%2BPtdxFHOLlfB8PThiralSMOaNn8KdXcNmiGiBtTlaDNlRYBJI6TGFcqiM3U71Gug205m5vuoU6MMdfLYeRIRKLZwJxWz0vizSA2X2u9N6f5eqg5kIGK1BAln3lnIiEND0BD3U7Ae6%2BD2e%2B%2FX4rsIdJDsymeUSyimirEHuC1QWmDtUereecgVuSLnOojrFsQAolXpWZZLaZ%2BvSIkuXNDjamUsFbOSJ9BPG73jpGQLbMpoowcNlt3KcsLytwlqgkhKkEYgh2pob5U8MhnFcAcUVfxJFDLqFl%2F3SMBaIIw2%2B7tvHxqlN4r8fPpRmIGKhFjXBmd6HBJVLfrmwmqHvb2X4BG9cbaq3Wfy1%2BvqpdGC%2B8w%3D%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=ASIAWFIPSWJCBIUOAX6R%2F20250313%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20250313T044819Z&X-Amz-Expires=36000&X-Amz-SignedHeaders=host&X-Amz-Signature=951f400e29e1f1d9c6ea4aeff331274f970ccdb4c303d18df957dc493822b5f2" // S3 prsigned file URL
-      }),
+      body: JSON.stringify({ fileUrl: presignedUrl }),
     };
-  };
-  
+  } catch (err) {
+    console.error("Error generating presigned URL:", err);
+    return { statusCode: 500, body: "Internal Server Error" };
+  }
+};
